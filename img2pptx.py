@@ -73,15 +73,23 @@ if __name__=="__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", help="Input folder path")
     parser.add_argument("-o", "--output", help="Output PowerPoint file path")
+    parser.add_argument("-f", "--addFilename", default=False, help="Add filename to the slide")
     args = parser.parse_args()
 
     prs = PowerPointUtil( args.output )
 
+    imgPaths = []
     for dirpath, dirnames, filenames in os.walk(args.input):
         for filename in filenames:
-            if filename.endswith(('.png', '.jpg', '.jpeg')):
-                prs.addSlide()
-                prs.addPicture(os.path.join(dirpath, filename), 0, 0)
-                prs.addText(filename, Inches(0), Inches(PowerPointUtil.SLIDE_HEIGHT_INCH-0.4), Inches(PowerPointUtil.SLIDE_WIDTH_INCH), Inches(0.4))
+            if filename.endswith(('.png', '.jpg', '.jpeg', '.JPG')):
+                imgPaths.append( os.path.join(dirpath, filename) )
+
+    imgPaths.sort()
+
+    for filename in imgPaths:
+        prs.addSlide()
+        prs.addPicture(os.path.join(dirpath, filename), 0, 0)
+        if args.addFilename:
+            prs.addText(os.path.basename(filename), Inches(0), Inches(PowerPointUtil.SLIDE_HEIGHT_INCH-0.4), Inches(PowerPointUtil.SLIDE_WIDTH_INCH), Inches(0.4))
 
     prs.save()
