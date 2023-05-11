@@ -73,7 +73,7 @@ if __name__=="__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", help="Input folder path")
     parser.add_argument("-o", "--output", help="Output PowerPoint file path")
-    parser.add_argument("-f", "--addFilename", default=False, help="Add filename to the slide")
+    parser.add_argument("-f", "--addFilename", default=False, action='store_true', help="Add filename to the slide")
     args = parser.parse_args()
 
     prs = PowerPointUtil( args.output )
