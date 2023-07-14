@@ -5,6 +5,9 @@
 
 ```
 pip3 install python-pptx
+pip3 install pip pillow
+brew install libffi libheif
+pip3 install git+https://github.com/david-poirier-csn/pyheif.git
 ```
 
 # how to use

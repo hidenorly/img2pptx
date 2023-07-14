@@ -17,6 +17,32 @@ import os
 import collections.abc
 from pptx import Presentation
 from pptx.util import Inches, Pt
+from PIL import Image
+import pyheif
+
+class ImageUtil:
+    def getFilenameWithExt(filename, ext=".jpeg"):
+        filename = os.path.splitext(filename)[0]
+        return filename + ext
+
+    def covertToJpeg(imageFile):
+        outFilename = ImageUtil.getFilenameWithExt(imageFile, ".jpeg")
+        image = None
+        if imageFile.endswith(('.heic', '.HEIC')):
+            heifImage = pyheif.read(imageFile)
+            image = Image.frombytes(
+                heifImage.mode,
+                heifImage.size,
+                heifImage.data,
+                "raw",
+                heifImage.mode,
+                heifImage.stride,
+            )
+        else:
+            image = Image.open(imageFile)
+        if image:
+            image.save(outFilename, "JPEG")
+        return outFilename
 
 class PowerPointUtil:
     SLIDE_WIDTH_INCH = 16
@@ -82,6 +108,10 @@ if __name__=="__main__":
     imgPaths = []
     for dirpath, dirnames, filenames in os.walk(args.input):
         for filename in filenames:
+            # convert required image
+            if filename.endswith(('.heic', '.HEIC')):
+                filename = ImageUtil.covertToJpeg(filename)
+
             if filename.endswith(('.png', '.jpg', '.jpeg', '.JPG')):
                 imgPaths.append( os.path.join(dirpath, filename) )
 
