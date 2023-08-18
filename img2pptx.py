@@ -110,7 +110,7 @@ if __name__=="__main__":
         for filename in filenames:
             # convert required image
             if filename.endswith(('.heic', '.HEIC')):
-                filename = ImageUtil.covertToJpeg(filename)
+                filename = ImageUtil.covertToJpeg(os.path.join(dirpath, filename))
 
             if filename.endswith(('.png', '.jpg', '.jpeg', '.JPG')):
                 imgPaths.append( os.path.join(dirpath, filename) )
