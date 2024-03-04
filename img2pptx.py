@@ -103,7 +103,7 @@ class PowerPointUtil:
             layout = self.prs.slide_layouts[6]
         self.currentSlide = self.prs.slides.add_slide(layout)
 
-    def addPicture(self, imagePath, x=0, y=0, width=None, height=None, isFitToSlide=True, regionWidth=None, regionHeight=None, isFitWihthinRegion=False):
+    def addPicture(self, imagePath, x=0, y=0, width=None, height=None, isFitToSlide=True, regionWidth=None, regionHeight=None, isFitWihthinRegion=False, isCenter=False):
         if not regionWidth:
             regionWidth = self.prs.slide_width
         if not regionHeight:
@@ -141,6 +141,12 @@ class PowerPointUtil:
                             else:
                                 picHeight = regionHeight
                                 picWidth = int(regionHeight * width / height + 0.99)
+                    if isCenter:
+                        if picWidth != regionWidth:
+                            pic.left = int( (regionWidth - picWidth) / 2 + 0.99 )
+                        if picHeight != regionHeight:
+                            pic.top = int( (regionHeight - picHeight) / 2 + 0.99 )
+
                     pic.width = picWidth
                     pic.height = picHeight
         return pic
@@ -217,7 +223,7 @@ if __name__=="__main__":
     parser.add_argument("-i", "--input", default=".", help="Input folder path")
     parser.add_argument("-o", "--output", default="output.pptx", help="Output PowerPoint file path")
     parser.add_argument("-a", "--addFilename", default=False, action='store_true', help="Add filename to the slide")
-    parser.add_argument("-l", "--layout", action='store', default='full', help='Specify layout full or left or right')
+    parser.add_argument("-l", "--layout", action='store', default='full', help='Specify layout full or left or right or center')
     parser.add_argument("-f", "--fullfit", action='store_true', default=False, help='Specify if want to fit within the slide')
     parser.add_argument('--offsetX', type=float, default=0, help='Specify offset x (Inch. max 16. float)')
     parser.add_argument('--offsetY', type=float, default=0, help='Specify offset y (Inch. max 9. float)')
@@ -271,9 +277,11 @@ if __name__=="__main__":
     if titleHeight==0:
         titleHeight = titleSize
 
+    isCenter = True if args.layout == "center" else False
+
     for filename in imgPaths:
         prs.addSlide()
-        pic = prs.addPicture(filename, x, y, None, None, True, regionWidth, regionHeight, isFitWihthinRegion)
+        pic = prs.addPicture(filename, x, y, None, None, True, regionWidth, regionHeight, isFitWihthinRegion, isCenter)
         # Add Title
         if args.title:
             prs.addText(args.title, x, 0, regionWidth, titleHeight, fontFace, titleSize, True, textAlign, True, args.titleFormat)
