@@ -49,7 +49,13 @@ class ImageUtil:
         else:
             image = Image.open(imageFile)
         if image:
-            image.save(outFilename, "JPEG")
+            if image.mode in ("RGBA", "LA") or (image.mode == "P" and "transparency" in image.info):
+                # fallback. this .heic includes alpha then need to save as ".png"
+                outFilename = ImageUtil.getFilenameWithExt(outFilename, ".png")
+                image.save(outFilename, "PNG")
+            else:
+                image.save(outFilename, "JPEG")
+
         return outFilename
 
 class PowerPointUtil:
